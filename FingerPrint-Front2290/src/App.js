@@ -6,18 +6,12 @@ import { ThemeProvider } from "styled-components"
 import * as Components from "./Components"
 import StudentDashboard from "./StudentDashboard"
 import DoctorDashboard from "./DoctorDashboard"
-import AdminDashboard from "./components/AdminDashboard" // ✅ Add this import
+import AdminDashboard from "./components/AdminDashboard"
+import { LanguageProvider, useLanguage } from "./contexts/LanguageContext"
 import { FaUserGraduate, FaChalkboardTeacher, FaLock } from "react-icons/fa"
 import "./styles.css"
 
 function App() {
-  const [signIn, toggle] = useState(true)
-
-  // ✅ Add admin credentials
-  const doctorCredentials = { email: "doctor@example.com", password: "doctor123" }
-  const studentCredentials = { email: "student@example.com", password: "student123" }
-  const adminCredentials = { email: "admin@example.com", password: "admin123" }
-
   const theme = {
     background: "#f6f5f7",
     text: "#333",
@@ -38,35 +32,55 @@ function App() {
     error: "#e74c3c",
   }
 
+  const [signIn, toggle] = useState(true)
+
+  const doctorCredentials = {
+    email: "doctor@example.com",
+    password: "doctor123",
+  }
+
+  const studentCredentials = {
+    email: "student@example.com",
+    password: "student123",
+  }
+
+  const adminCredentials = {
+    email: "admin@example.com",
+    password: "admin123",
+  }
+
+  
   return (
-    <ThemeProvider theme={theme}>
-      <Router>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <LoginForm
-                signIn={signIn}
-                toggle={toggle}
-                doctorCredentials={doctorCredentials}
-                studentCredentials={studentCredentials}
-                adminCredentials={adminCredentials} // ✅ Pass admin credentials
-              />
-            }
-          />
-          <Route path="/dashboard" element={<StudentDashboard />} />
-          <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
-          <Route path="/admin-dashboard" element={<AdminDashboard />} /> {/* ✅ NEW Route */}
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </Router>
-    </ThemeProvider>
+    <LanguageProvider>
+      <ThemeProvider theme={theme}>
+        <Router>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <LoginForm
+                  signIn={signIn}
+                  toggle={toggle}
+                  doctorCredentials={doctorCredentials}
+                  studentCredentials={studentCredentials}
+                  adminCredentials={adminCredentials}
+                />
+              }
+            />
+            <Route path="/dashboard" element={<StudentDashboard />} />
+            <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
+            <Route path="/admin-dashboard" element={<AdminDashboard />} />
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </Router>
+      </ThemeProvider>
+    </LanguageProvider>
   )
 }
 
-// LoginForm with Admin logic
 function LoginForm({ signIn, toggle, doctorCredentials, studentCredentials, adminCredentials }) {
   const navigate = useNavigate()
+  const { t, toggleLanguage, language } = useLanguage()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
@@ -106,7 +120,7 @@ function LoginForm({ signIn, toggle, doctorCredentials, studentCredentials, admi
             break
         }
       } else {
-        setError("Invalid credentials. Please try again.")
+        setError(t("Invalid credentials. Please try again."))
       }
       setLoading(false)
     }, 1000)
@@ -115,97 +129,112 @@ function LoginForm({ signIn, toggle, doctorCredentials, studentCredentials, admi
   return (
     <div className="login-page">
       <Components.GlobalStyle />
+
+      {/* 🔵 Language Toggle Button */}
+      <div className="language-toggle-container">
+        <button className="language-toggle-button" onClick={toggleLanguage}>
+          🌐 {language === "english" ? "العربية" : "English"}
+        </button>
+      </div>
+
       <div className="university-logo">
-        <h1>Akhbar El-Youm Academy</h1>
+        <h1>{t("Akhbar El-Youm Academy")}</h1>
       </div>
 
       <Components.Container>
-        {/* Doctor Login Form */}
         <Components.SignUpContainer signinIn={signIn}>
           <Components.Form onSubmit={handleSubmit}>
-            <Components.Title>Doctor Login</Components.Title>
+            <Components.Title>{t("Doctor Login")}</Components.Title>
             <div className="form-icon">
               <FaChalkboardTeacher size={40} color="#1b2a49" />
             </div>
             <Components.InputGroup>
-              <Components.InputIcon><FaChalkboardTeacher /></Components.InputIcon>
+              <Components.InputIcon>
+                <FaChalkboardTeacher />
+              </Components.InputIcon>
               <Components.Input
                 type="email"
-                placeholder="Email"
+                placeholder={t("Email")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </Components.InputGroup>
             <Components.InputGroup>
-              <Components.InputIcon><FaLock /></Components.InputIcon>
+              <Components.InputIcon>
+                <FaLock />
+              </Components.InputIcon>
               <Components.Input
                 type="password"
-                placeholder="Password"
+                placeholder={t("Password")}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </Components.InputGroup>
             {error && <Components.ErrorMessage>{error}</Components.ErrorMessage>}
-            <Components.ForgotPassword>Forgot your password?</Components.ForgotPassword>
-            <Components.Button disabled={loading}>{loading ? "Signing In..." : "Sign In"}</Components.Button>
+            <Components.ForgotPassword>{t("Forgot your password?")}</Components.ForgotPassword>
+            <Components.Button disabled={loading}>{loading ? t("Signing In...") : t("Sign In")}</Components.Button>
           </Components.Form>
         </Components.SignUpContainer>
 
-        {/* Student Login Form */}
         <Components.SignInContainer signinIn={signIn}>
           <Components.Form onSubmit={handleSubmit}>
-            <Components.Title>Student Login</Components.Title>
+            <Components.Title>{t("Student Login")}</Components.Title>
             <div className="form-icon">
               <FaUserGraduate size={40} color="#1b2a49" />
             </div>
             <Components.InputGroup>
-              <Components.InputIcon><FaUserGraduate /></Components.InputIcon>
+              <Components.InputIcon>
+                <FaUserGraduate />
+              </Components.InputIcon>
               <Components.Input
                 type="email"
-                placeholder="Email"
+                placeholder={t("Email")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </Components.InputGroup>
             <Components.InputGroup>
-              <Components.InputIcon><FaLock /></Components.InputIcon>
+              <Components.InputIcon>
+                <FaLock />
+              </Components.InputIcon>
               <Components.Input
                 type="password"
-                placeholder="Password"
+                placeholder={t("Password")}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </Components.InputGroup>
             {error && <Components.ErrorMessage>{error}</Components.ErrorMessage>}
-            <Components.ForgotPassword>Forgot your password?</Components.ForgotPassword>
-            <Components.Button disabled={loading}>{loading ? "Signing In..." : "Sign In"}</Components.Button>
+            <Components.ForgotPassword>{t("Forgot your password?")}</Components.ForgotPassword>
+            <Components.Button disabled={loading}>{loading ? t("Signing In...") : t("Sign In")}</Components.Button>
           </Components.Form>
         </Components.SignInContainer>
 
-        {/* Overlay Panel */}
         <Components.OverlayContainer signinIn={signIn}>
           <Components.Overlay signinIn={signIn}>
             <Components.LeftOverlayPanel signinIn={signIn}>
-              <Components.Title inOverlay>Welcome Doctor!</Components.Title>
-              <Components.Paragraph>For Students, Sign In below</Components.Paragraph>
-              <Components.GhostButton onClick={() => toggle(true)}>Student Login</Components.GhostButton>
+              <Components.Title inOverlay>{t("Welcome Doctor!")}</Components.Title>
+              <Components.Paragraph>{t("For Students, Sign In below")}</Components.Paragraph>
+              <Components.GhostButton onClick={() => toggle(true)}>{t("Student Login")}</Components.GhostButton>
             </Components.LeftOverlayPanel>
 
             <Components.RightOverlayPanel signinIn={signIn}>
-              <Components.Title inOverlay>Welcome Students!</Components.Title>
-              <Components.Paragraph>For Instructors, Sign In below</Components.Paragraph>
-              <Components.GhostButton onClick={() => toggle(false)}>Instructor Login</Components.GhostButton>
+              <Components.Title inOverlay>{t("Welcome Students!")}</Components.Title>
+              <Components.Paragraph>{t("For Instructors, Sign In below")}</Components.Paragraph>
+              <Components.GhostButton onClick={() => toggle(false)}>{t("Instructor Login")}</Components.GhostButton>
             </Components.RightOverlayPanel>
           </Components.Overlay>
         </Components.OverlayContainer>
       </Components.Container>
 
       <div className="login-footer">
-        <p>© {new Date().getFullYear()} Akhbar El-Youm Academy. All rights reserved.</p>
+        <p>
+          © {new Date().getFullYear()} {t("Akhbar El-Youm Academy")}. {t("All rights reserved")}.
+        </p>
       </div>
     </div>
   )

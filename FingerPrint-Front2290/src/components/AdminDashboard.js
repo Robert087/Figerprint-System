@@ -1,11 +1,13 @@
 import React, { useState } from "react"
 import {
-  FaUsers, FaBook, FaFingerprint, FaSignOutAlt, FaUserPlus, FaHome, FaMoon, FaSun
+  FaUsers, FaBook, FaFingerprint, FaSignOutAlt, FaUserPlus, FaHome, FaMoon, FaSun, FaBell
 } from "react-icons/fa"
 import CourseManagement from "./CourseManagement"
 import StudentManagement from "./StudentManagement"
 import FingerprintLinker from "./FingerprintLinker"
 import DefineDoctorTab from "./DefineDoctorTab"
+import ManageSchedule from "./ManageSchedule"
+import NotificationTab from "./AdminNotificationsTab.js"
 import "../dashboard.css"
 
 function AdminDashboard() {
@@ -21,7 +23,9 @@ function AdminDashboard() {
     { id: "courses", label: "Manage Courses", icon: <FaBook /> },
     { id: "students", label: "Manage Students", icon: <FaUsers /> },
     { id: "fingerprint", label: "Link Fingerprints", icon: <FaFingerprint /> },
-     { id: "define-doctor", label: "Define Doctor", icon: <FaUserPlus /> },
+    { id: "define-doctor", label: "Define Doctor", icon: <FaUserPlus /> },
+    { id: "schedule", label: "Manage Schedule", icon: <FaBook /> },
+    { id: "notifications", label: "Notifications", icon: <FaBell /> },
     { id: "logout", label: "Logout", icon: <FaSignOutAlt /> }
   ]
 
@@ -31,6 +35,8 @@ function AdminDashboard() {
       case "students": return <StudentManagement />
       case "fingerprint": return <FingerprintLinker />
       case "define-doctor": return <DefineDoctorTab />
+      case "schedule": return <ManageSchedule />
+      case "notifications": return <NotificationTab />
       case "dashboard": return (
         <div className="dashboard-layout">
           <div className="dashboard-header">

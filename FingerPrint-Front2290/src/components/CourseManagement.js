@@ -1,7 +1,10 @@
-// CourseManagement.js
-import React, { useState, useEffect } from "react"
+"use client"
+
+import { useState, useEffect } from "react"
 import { FaPlus } from "react-icons/fa"
 import "../dashboard.css"
+import { useLanguage } from "../contexts/LanguageContext"
+import { showSuccess, showError } from "../utils/toast"
 
 function CourseManagement() {
   const [courses, setCourses] = useState([])
@@ -11,9 +14,10 @@ function CourseManagement() {
     creditHours: "",
     semester: "",
     year: "",
-    doctorEmail: ""
+    doctorEmail: "",
   })
   const [doctors, setDoctors] = useState([])
+  const { t } = useLanguage()
 
   useEffect(() => {
     const savedDoctors = JSON.parse(localStorage.getItem("doctors")) || []
@@ -32,39 +36,74 @@ function CourseManagement() {
   }
 
   const handleAdd = () => {
-    if (!form.name || !form.code) return alert("Course name and code are required")
-    setCourses([...courses, form])
+    if (!form.name?.trim()) {
+      showError(t("Course name is required"))
+      return
+    }
+    if (!form.code?.trim()) {
+      showError(t("Course code is required"))
+      return
+    }
+    if (!form.year) {
+      showError(t("Year is required"))
+      return
+    }
+    if (!form.semester) {
+      showError(t("Semester is required"))
+      return
+    }
+
+    if (courses.some((course) => course.code.toLowerCase() === form.code.toLowerCase())) {
+      showError(t("Course code already exists"))
+      return
+    }
+
+    const newCourse = {
+      ...form,
+      id: Date.now(),
+      createdAt: new Date().toISOString(),
+      status: "Active",
+    }
+
+    setCourses([...courses, newCourse])
     setForm({ name: "", code: "", creditHours: "", semester: "", year: "", doctorEmail: "" })
+    showSuccess(t("Course added successfully"))
   }
 
   return (
     <div className="section-layout">
       <div className="section-header">
-        <h1>Manage Courses</h1>
-        <p className="subtitle">Add and assign courses to doctors</p>
+        <h1>{t("Manage Courses")}</h1>
+        <p className="subtitle">{t("Add and assign courses to doctors")}</p>
       </div>
 
       <div className="form-grid">
-        <input name="name" placeholder="Course Name" value={form.name} onChange={handleChange} />
-        <input name="code" placeholder="Course Code" value={form.code} onChange={handleChange} />
-        <input name="creditHours" placeholder="Credit Hours" value={form.creditHours} onChange={handleChange} />
+        <input name="name" placeholder={t("Course Name")} value={form.name} onChange={handleChange} />
+        <input name="code" placeholder={t("Course Code")} value={form.code} onChange={handleChange} />
+        <input name="creditHours" placeholder={t("Credit Hours")} value={form.creditHours} onChange={handleChange} />
 
         <select name="year" value={form.year} onChange={handleChange}>
-          <option value="" disabled hidden>Select Year</option>
-          <option value="1">Year 1</option>
-          <option value="2">Year 2</option>
-          <option value="3">Year 3</option>
-          <option value="4">Year 4</option>
+          <option value="" disabled hidden>
+            {t("Select Year")}
+          </option>
+          <option value="1">{t("1st Year")}</option>
+          <option value="2">{t("2nd Year")}</option>
+          <option value="3">{t("3rd Year")}</option>
+          <option value="4">{t("4th Year")}</option>
         </select>
 
         <select name="semester" value={form.semester} onChange={handleChange}>
-          <option value="" disabled hidden>Select Semester</option>
-          <option value="Semester 1">Semester 1</option>
-          <option value="Semester 2">Semester 2</option>
+          <option value="" disabled hidden>
+            {t("Select Semester")}
+          </option>
+          <option value="Semester 1">{t("Semester 1")}</option>
+          <option value="Semester 2">{t("Semester 2")}</option>
         </select>
 
         <select name="doctorEmail" value={form.doctorEmail} onChange={handleChange}>
-          <option value="" disabled hidden>Assign Doctor</option>
+          <option value="" disabled hidden>
+            {t("Assign Doctor")}
+          </option>
           {doctors.map((doc, index) => (
             <option key={index} value={doc.email}>
               {doc.name} - {doc.department}
@@ -73,23 +112,23 @@ function CourseManagement() {
         </select>
 
         <button className="action-button" onClick={handleAdd}>
-          <FaPlus /> Add Course
+          <FaPlus /> {t("Add Course")}
         </button>
       </div>
 
       <div className="data-table-container">
         {courses.length === 0 ? (
-          <p className="no-data-message">No courses added yet.</p>
+          <p className="no-data-message">{t("No courses added yet.")}</p>
         ) : (
           <table className="data-table">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Code</th>
-                <th>Credit Hours</th>
-                <th>Year</th>
-                <th>Semester</th>
-                <th>Assigned Doctor</th>
+                <th>{t("Name")}</th>
+                <th>{t("Code")}</th>
+                <th>{t("Credit Hours")}</th>
+                <th>{t("Year")}</th>
+                <th>{t("Semester")}</th>
+                <th>{t("Assigned Doctor")}</th>
               </tr>
             </thead>
             <tbody>
@@ -100,7 +139,7 @@ function CourseManagement() {
                   <td>{course.creditHours}</td>
                   <td>{course.year}</td>
                   <td>{course.semester}</td>
-                  <td>{doctors.find(d => d.email === course.doctorEmail)?.name || "Not Assigned"}</td>
+                  <td>{doctors.find((d) => d.email === course.doctorEmail)?.name || t("Not Assigned")}</td>
                 </tr>
               ))}
             </tbody>

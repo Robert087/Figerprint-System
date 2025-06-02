@@ -1,9 +1,7 @@
-"use client"
 
 import styled, { createGlobalStyle } from "styled-components"
 import { motion } from "framer-motion"
 
-// Global styles
 export const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
@@ -22,7 +20,6 @@ export const GlobalStyle = createGlobalStyle`
   }
 `
 
-// Main Container with animation
 export const Container = styled(motion.div)`
   background-color: #fff;
   border-radius: 16px;
@@ -42,7 +39,6 @@ Container.defaultProps = {
   transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] },
 }
 
-// Sign-up and Sign-in Containers
 export const SignUpContainer = styled.div`
   position: absolute;
   top: 0;
@@ -54,11 +50,7 @@ export const SignUpContainer = styled.div`
   z-index: 1;
   ${(props) =>
     props.signinIn !== true
-      ? `
-    transform: translateX(100%);
-    opacity: 1;
-    z-index: 5;
-  `
+      ? `transform: translateX(100%); opacity: 1; z-index: 5;`
       : null}
 `
 
@@ -71,14 +63,9 @@ export const SignInContainer = styled.div`
   width: 50%;
   z-index: 2;
   ${(props) =>
-    props.signinIn !== true
-      ? `
-    transform: translateX(100%);
-  `
-      : null}
+    props.signinIn !== true ? `transform: translateX(100%);` : null}
 `
 
-// Form styling
 export const Form = styled.form`
   background-color: #fff;
   display: flex;
@@ -88,7 +75,6 @@ export const Form = styled.form`
   padding: 0 50px;
   height: 100%;
   text-align: center;
-  transition: all 0.3s ease;
 `
 
 export const Title = styled.h1`
@@ -110,7 +96,6 @@ export const InputIcon = styled.div`
   top: 50%;
   transform: translateY(-50%);
   color: #aaa;
-  transition: all 0.3s ease;
 `
 
 export const Input = styled.input`
@@ -173,14 +158,14 @@ export const Button = styled.button`
   text-transform: uppercase;
   border: none;
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
   margin-top: 20px;
   width: 80%;
 
   &:hover {
     background-color: ${({ theme }) => theme.buttonHover};
-    box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
     transform: translateY(-2px);
   }
 
@@ -205,7 +190,6 @@ export const GhostButton = styled(Button)`
   background-color: transparent;
   border: 2px solid #fff;
   color: #fff;
-  transition: background-color 0.3s ease, color 0.3s ease;
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.2);
@@ -222,12 +206,11 @@ export const OverlayContainer = styled.div`
   overflow: hidden;
   transition: transform 0.6s ease-in-out;
   z-index: 100;
-  ${(props) =>
-    props.signinIn !== true
-      ? `
-    transform: translateX(-100%);
-  `
-      : null}
+
+  ${({ signinIn }) =>
+    signinIn !== true
+      ? `transform: translateX(-100%);`
+      : ""}
 `
 
 export const Overlay = styled.div`
@@ -239,12 +222,11 @@ export const Overlay = styled.div`
   width: 200%;
   transform: translateX(0);
   transition: transform 0.6s ease-in-out;
-  ${(props) =>
-    props.signinIn !== true
-      ? `
-    transform: translateX(50%);
-  `
-      : null}
+
+  ${({ signinIn }) =>
+    signinIn !== true
+      ? `transform: translateX(50%);`
+      : ""}
 `
 
 export const OverlayPanel = styled.div`
@@ -263,24 +245,18 @@ export const OverlayPanel = styled.div`
 `
 
 export const LeftOverlayPanel = styled(OverlayPanel)`
-  transform: translateX(-20%);
-  ${(props) =>
-    props.signinIn !== true
-      ? `
-    transform: translateX(0);
-  `
-      : null}
+  ${({ signinIn }) =>
+    signinIn !== true
+      ? `transform: translateX(0);`
+      : `transform: translateX(-20%);`}
 `
 
 export const RightOverlayPanel = styled(OverlayPanel)`
   right: 0;
-  transform: translateX(0);
-  ${(props) =>
-    props.signinIn !== true
-      ? `
-    transform: translateX(20%);
-  `
-      : null}
+  ${({ signinIn }) =>
+    signinIn !== true
+      ? `transform: translateX(20%);`
+      : `transform: translateX(0);`}
 `
 
 export const Paragraph = styled.p`
